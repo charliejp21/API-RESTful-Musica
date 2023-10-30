@@ -1,5 +1,8 @@
 require('dotenv').config();
 const {PORT} = process.env;
+const routes = require('./routes/index.js');
+const morgan = require('morgan');
+
 //Importar conexión a base de datos
 const conection = require("./database/conection")
 
@@ -24,9 +27,10 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 
-//Cargar configuraciones de rutas
+app.use(morgan('dev'))
 
-//Ruta de prueba
+//Cargar configuraciones de rutas
+app.use('/', routes);
 
 //Poner el servidor a escuchar peticiones http
 app.listen(PORT, () => {
