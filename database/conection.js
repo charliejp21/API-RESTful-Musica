@@ -2,6 +2,7 @@ require('dotenv').config();
 const {DB_NAME} = process.env;
 //Importar mongoose
 const mongoose = require("mongoose");
+mongoose.set("strictQuery", true);
 
 //Metodo de conexion
 const conection = async() => {
