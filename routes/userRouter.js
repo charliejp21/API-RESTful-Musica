@@ -1,13 +1,7 @@
-//Acción de prueba
+const {Router} = require('express');
+const registerUserHandler = require('../handlers/userHandler')
+const userRoutes = Router();
 
-const prueba = (req, res) => {
+userRoutes.post("/register", registerUserHandler)
 
-    return res.status(200).json({
-
-        status: "success",
-        mensaje: "Prueba exitosa desde user"
-    })
-
-}
-
-module.exports = prueba;
+module.exports = userRoutes;
