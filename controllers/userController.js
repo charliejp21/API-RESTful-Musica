@@ -1,4 +1,5 @@
 const User = require("../models/UserModel")
+const bcrypt = require('bcrypt')
 const userDuplicatedController = (email, nick) => {
 
     if(email && nick){
@@ -15,4 +16,24 @@ const userDuplicatedController = (email, nick) => {
 
 }
 
-module.exports = userDuplicatedController;
+const saveUserController = async(name, surname, nick, email, password) => {
+
+    const pwd = await bcrypt.hash(password, 10)
+
+    password = pwd;
+
+    const registerUser = new User({
+
+        name,
+        surname,
+        nick, 
+        email, 
+        password
+
+    })
+
+    return registerUser.save();
+
+}
+
+module.exports = {userDuplicatedController, saveUserController};
