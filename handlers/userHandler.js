@@ -1,5 +1,6 @@
 const validateRegisterUser = require("../services/validate")
-const registerUserHandler = (req, res) =>{
+const userDuplicatedController = require("../controllers/userController")
+const registerUserHandler = async(req, res) =>{
 
     //Recoger datos de la petición
     const {name, surname, nick, email, password} = req.body;
@@ -35,6 +36,38 @@ const registerUserHandler = (req, res) =>{
 
 
     //Control de usuarios duplicados
+    try {
+
+        const userDuplicated = await userDuplicatedController(email, nick)
+
+        if(userDuplicated && userDuplicated.length >= 1){
+
+            return res.status(400).json({
+
+                status: "error", 
+                mensaje: "El usuario ya existe"
+            })
+
+        }else{
+
+            return res.status(201).json({
+
+                status: "success",
+                mensaje: "Usuario creado",
+             
+            })
+        }
+        
+    } catch (error) {
+        
+        return res.status(500).json({
+
+            status: "error",
+            mensaje: "Error del servidor al crear el usuario"
+
+        })
+        
+    }
 
     //Cifrar la contraseña
 
