@@ -1,5 +1,5 @@
 const validateRegisterUser = require("../services/validate")
-const userDuplicatedController = require("../controllers/userController")
+const {userDuplicatedController, saveUserController} = require("../controllers/userController")
 const registerUserHandler = async(req, res) =>{
 
     //Recoger datos de la petición
@@ -50,11 +50,15 @@ const registerUserHandler = async(req, res) =>{
 
         }else{
 
-            return res.status(201).json({
+            const registerUser = await saveUserController(name, surname, nick, email, password)
+
+             //Devolver el resultado
+             return res.status(201).json({
 
                 status: "success",
                 mensaje: "Usuario creado",
-             
+                user: registerUser.name,
+                email: registerUser.email
             })
         }
         
@@ -78,13 +82,6 @@ const registerUserHandler = async(req, res) =>{
     //Limpiar el objeto a devolver
 
     //Devolver un resultado
-
-    return res.status(200).json({
-
-        status: "success",
-        mensaje: "Ruta userRegister"
-
-    })
 
 }
 
