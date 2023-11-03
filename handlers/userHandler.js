@@ -1,5 +1,6 @@
 const validateRegisterUser = require("../services/validate")
-const {userDuplicatedController, saveUserController} = require("../controllers/userController")
+const createTokenUser = require("../services/jwt")
+const {userDuplicatedController, saveUserController, findUserController} = require("../controllers/userController")
 const registerUserHandler = async(req, res) =>{
 
     //Recoger datos de la petición
@@ -85,4 +86,78 @@ const registerUserHandler = async(req, res) =>{
 
 }
 
-module.exports = registerUserHandler;
+const loginUserHandler = async(req, res) => {
+
+    //Recoger los parametros de la petición
+    const {email, password} = req.body
+
+    //Comprobar que me llegan
+    if(!email || !password){
+
+        return res.status(400).json({
+
+            status: "error", 
+            mensaje: "Faltan datos por enviar para el login"
+
+        })
+        
+    }
+
+    //Buscar en la bd si existe el mail
+    try {
+
+        const findUser = await findUserController(email, password)
+    
+        if(findUser){
+            
+            const token = createTokenUser(findUser)
+
+            return res.status(200).json({
+
+                status: "success",
+                mensaje: "Te has identificado exitosamente",
+                usuario: {
+                    id: findUser._id,
+                    name:findUser.name,
+                    nick: findUser.nick,
+                    token: token,
+                }
+
+            })
+
+        }else{
+
+            return res.status(400).send({
+
+                status: "error",
+                mensaje: "La información proporcionada no coincide"
+
+            })
+        }
+
+    } catch (error) {
+
+        return res.status(500).send({
+
+            status: "error",
+            mensaje: "Error del servidor al ejecutar el login"
+
+        })
+        
+    }
+
+    //Comprobar su contraseña
+
+    //Conseguir token jwt(Crear un servicio que nos permita crear el token)
+
+    //Devolver datos del usuario y token
+
+    return res.status(200).json({
+
+        status: "success", 
+        mensaje: "ruta del login"
+    })
+
+}
+
+module.exports = {registerUserHandler, loginUserHandler};

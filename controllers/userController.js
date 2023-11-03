@@ -36,4 +36,31 @@ const saveUserController = async(name, surname, nick, email, password) => {
 
 }
 
-module.exports = {userDuplicatedController, saveUserController};
+const findUserController = async (email, password) => {
+
+    if(email && password){
+
+        const findUser = await User.findOne({email: email})
+        
+        if(findUser){
+
+            const pwdMatch = await bcrypt.compareSync(password, findUser.password)
+
+            if(pwdMatch){
+
+                const newUser = {
+
+                    _id: findUser._id,
+                    name: findUser.name,
+                    nick: findUser.nick
+                }
+    
+                return newUser
+            }
+        }
+    
+    }
+
+}
+
+module.exports = {userDuplicatedController, saveUserController, findUserController};
