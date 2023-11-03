@@ -63,4 +63,15 @@ const findUserController = async (email, password) => {
 
 }
 
-module.exports = {userDuplicatedController, saveUserController, findUserController};
+const findUserByIdController = async(id) => {
+
+    const findUserDb = await User.findById(id).select({password: 0})
+
+    if(findUserDb){
+
+        return findUserDb;
+    }
+
+}
+
+module.exports = {userDuplicatedController, saveUserController, findUserController, findUserByIdController};
