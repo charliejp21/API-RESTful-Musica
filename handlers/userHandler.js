@@ -1,6 +1,6 @@
 const validateRegisterUser = require("../services/validate")
 const createTokenUser = require("../services/jwt")
-const {userDuplicatedController, saveUserController, findUserController} = require("../controllers/userController")
+const {userDuplicatedController, saveUserController, findUserController, findUserByIdController} = require("../controllers/userController")
 const registerUserHandler = async(req, res) =>{
 
     //Recoger datos de la petición
@@ -74,16 +74,6 @@ const registerUserHandler = async(req, res) =>{
         
     }
 
-    //Cifrar la contraseña
-
-    //Crear objtos del usuario
-
-    //Guardar usuario en la bd
-
-    //Limpiar el objeto a devolver
-
-    //Devolver un resultado
-
 }
 
 const loginUserHandler = async(req, res) => {
@@ -116,12 +106,8 @@ const loginUserHandler = async(req, res) => {
 
                 status: "success",
                 mensaje: "Te has identificado exitosamente",
-                usuario: {
-                    id: findUser._id,
-                    name:findUser.name,
-                    nick: findUser.nick,
-                    token: token,
-                }
+                usuario: findUser,
+                token: token
 
             })
 
@@ -146,18 +132,47 @@ const loginUserHandler = async(req, res) => {
         
     }
 
-    //Comprobar su contraseña
+}
 
-    //Conseguir token jwt(Crear un servicio que nos permita crear el token)
+const userProfileHandler = async(req, res) => {
 
-    //Devolver datos del usuario y token
+    //Recoger id de usuario
+    const {id} = req.params;
 
-    return res.status(200).json({
+    //Consulta para sacar los datos del perfil
+    try{
 
-        status: "success", 
-        mensaje: "ruta del login"
+        const findUser = await findUserByIdController(id)
+        
+        if(findUser._id){
+
+            //Devolver resultados
+            return res.status(200).json({
+
+                status: "success", 
+                user: findUser
+                
+            })
+
+        }
+
+    }catch{
+
+        return res.status(400).json({
+
+            status: "error",
+            mensaje: "No fue posible encontrar un perfil con el id indicado"
+        })
+
+    }
+
+    return res.satus(500).json({
+
+        status: "error",
+        message: "Error del servidor al obtener el perfil con el id solicitado"
+        
     })
 
 }
 
-module.exports = {registerUserHandler, loginUserHandler};
+module.exports = {registerUserHandler, loginUserHandler, userProfileHandler};
