@@ -1,6 +1,6 @@
 const validateRegisterUser = require("../services/validate")
 const createTokenUser = require("../services/jwt")
-const {userDuplicatedController, saveUserController, findUserController, findUserByIdController} = require("../controllers/userController")
+const {userDuplicatedController, saveUserController, findUserController, findUserByIdController, updateUserController} = require("../controllers/userController")
 const registerUserHandler = async(req, res) =>{
 
     //Recoger datos de la petición
@@ -175,4 +175,72 @@ const userProfileHandler = async(req, res) => {
 
 }
 
-module.exports = {registerUserHandler, loginUserHandler, userProfileHandler};
+const updateUserHandler = async (req, res) => {
+
+    //Recoger datos del usuario identificado
+    const user = req.user; 
+
+    //Recoger datos a actualizar
+    const{email, nick} = req.body;
+
+    //Validar los datos
+    try {
+        
+        validateRegisterUser(req.body)
+
+        
+    } catch (error) {
+
+        return res.status(400).json({
+
+            status: "error",
+            mensaje: "Validación no superada"
+    
+        })
+        
+    }
+
+    //Comprobar si el usuario
+    try {
+
+        const findUser = await userDuplicatedController(email, nick)
+
+        if(findUser && findUser.length >= 1){
+
+            return res.status(400).json({
+
+                status: "error", 
+                mensaje: "El usuario ya existe"
+            })
+
+        }else{
+
+            const updateUser = await updateUserController(user, req.body);
+
+            if(updateUser){
+
+                return res.status(200).json({
+
+                    status: "success",
+                    mensaje: "Usuario actualizado exitosamente"
+                })
+            }
+
+        }
+
+    }catch(error){
+         
+        return res.status(500).json({
+
+            status: "error",
+            mensaje: "Error del servidor al crear el usuario"
+
+        })
+
+
+    } 
+
+    
+}
+
+module.exports = {registerUserHandler, loginUserHandler, userProfileHandler,updateUserHandler};

@@ -74,4 +74,26 @@ const findUserByIdController = async(id) => {
 
 }
 
-module.exports = {userDuplicatedController, saveUserController, findUserController, findUserByIdController};
+const updateUserController = async (user, data) => {
+
+    if (data.password) {
+
+        const pwd = await bcrypt.hash(data.password, 10);
+        
+        data.password = pwd;
+
+    } else {
+        
+        delete data.password;
+    }
+
+    return await User.findByIdAndUpdate(
+        user.id, // Primer argumento: ID del usuario a actualizar
+        data, // Segundo argumento: Campos y valores a actualizar
+        { new: true } // Opciones: Devolver la versión actualizada del documento
+    );
+
+};
+
+
+module.exports = {userDuplicatedController, saveUserController, findUserController, findUserByIdController, updateUserController};
