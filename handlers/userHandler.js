@@ -1,6 +1,7 @@
 const validateRegisterUser = require("../services/validate")
 const createTokenUser = require("../services/jwt")
-const {userDuplicatedController, saveUserController, findUserController, findUserByIdController, updateUserController} = require("../controllers/userController")
+const fs = require("fs")
+const {userDuplicatedController, saveUserController, findUserController, findUserByIdController, updateUserController, updateAvatarController} = require("../controllers/userController")
 const registerUserHandler = async(req, res) =>{
 
     //Recoger datos de la petición
@@ -243,4 +244,66 @@ const updateUserHandler = async (req, res) => {
     
 }
 
-module.exports = {registerUserHandler, loginUserHandler, userProfileHandler,updateUserHandler};
+const updateAvatarHandler = async (req, res) => {
+
+    //Configuración de subida(multer)
+
+    //Recoger el ficheri de imagen y comparar si existe
+    if(!req.file){
+
+        return res.status(404).json({
+            status: "error",
+            mensaje: "La petición no incluye la imagen"
+        })
+    }
+
+    //Conseguir el nombre del archivo
+    const originalName = req.file.originalname;
+
+    //Sacar info de la imagen
+    const imgExtension = originalName.split("\.");
+    const extension = imgExtension.length > 1 ? imgExtension.reverse()[0] : null;
+
+    //Comprobar si la extension es valida
+    if(extension != "png" && extension != "jpg" && extension != "jpeg" && extension != "gif"){
+
+        //Borrar archivo y devolver error
+        const filePath = req.file.path;
+        
+        fs.unlinkSync(filePath)
+
+        return res.status(401).json({
+
+            status: "success", 
+            mensaje: "La extensión de la imgen no es válida"
+        })
+
+    }
+
+    //Si es correcto guardar la imagen en la bd
+    try {
+
+        const updateAvatarDB = await updateAvatarController(req.user.id, req.file)
+
+        return res.status(200).json({
+
+            status: "success", 
+            mensaje: "Se ha actualizado el avatar exitosamente",
+            file: req.file.filename,
+            ruta: req.file.path
+        })
+        
+    } catch (error) {
+
+        return res.status(500).json({
+
+            status: "success", 
+            mensaje: "Error del servidor al actualizar el avatar"
+
+        })
+        
+    }
+   
+}
+
+module.exports = {registerUserHandler, loginUserHandler, userProfileHandler,updateUserHandler, updateAvatarHandler};
