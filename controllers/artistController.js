@@ -8,4 +8,10 @@ const saveArtistController = async (artistData) => {
     
 }
 
-module.exports = saveArtistController;
+const getArtistController = async(id) => {
+
+    return await Artist.findById(id);
+
+}
+
+module.exports = {saveArtistController, getArtistController};

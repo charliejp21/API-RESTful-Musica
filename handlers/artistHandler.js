@@ -1,4 +1,4 @@
-const saveArtistController = require("../controllers/artistController")
+const {saveArtistController, getArtistController} = require("../controllers/artistController")
 const saveArtistHandler = async(req, res) => {
 
     //Recoger datos del body
@@ -34,4 +34,46 @@ const saveArtistHandler = async(req, res) => {
 
 }
 
-module.exports = saveArtistHandler;
+const getArtistHandler = async(req, res) => {
+
+    //Sacar parametro por la ur
+    const {id} = req.params;
+
+    try {
+
+        const findArtistDb = await getArtistController(id);
+
+        if(findArtistDb){
+
+            return res.status(200).json({
+
+                status: "success", 
+                mensaje: "Se ha obtenido el artista exitosamente",
+                artista: findArtistDb
+            })
+
+
+        }else{
+
+            return res.status(404).json({
+
+                status: "error", 
+                mensaje: "No se ha encontrado el artista con ese id"
+            })
+
+        }
+
+        
+    } catch (error) {
+        
+        return res.status(500).json({
+
+            status: "error", 
+            mensaje: "Ha fallado el servidor al buscar el artista",
+     
+        })
+    }
+
+}
+
+module.exports = {saveArtistHandler, getArtistHandler};
