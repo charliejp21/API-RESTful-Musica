@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const {auth} = require("../middlewares/auth")
 const multer = require("multer")
-const {registerUserHandler, loginUserHandler, userProfileHandler, updateUserHandler, updateAvatarHandler} = require('../handlers/userHandler')
+const {registerUserHandler, loginUserHandler, userProfileHandler, updateUserHandler, updateAvatarHandler, getAvatarHandler} = require('../handlers/userHandler')
 const userRoutes = Router();
 
 //Imporar multer
@@ -23,5 +23,5 @@ userRoutes.post("/login", loginUserHandler)
 userRoutes.get("/profile/:id", auth, userProfileHandler)
 userRoutes.put("/update", auth, updateUserHandler)
 userRoutes.post("/upload-avatar", [auth, uploads.single("file0")], updateAvatarHandler)
-
+userRoutes.get("/user-avatar/:file", getAvatarHandler)
 module.exports = userRoutes;
