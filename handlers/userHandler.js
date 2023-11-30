@@ -1,7 +1,9 @@
 const validateRegisterUser = require("../services/validate")
 const createTokenUser = require("../services/jwt")
 const fs = require("fs")
+const path = require("path")
 const {userDuplicatedController, saveUserController, findUserController, findUserByIdController, updateUserController, updateAvatarController} = require("../controllers/userController")
+const { error } = require("console")
 const registerUserHandler = async(req, res) =>{
 
     //Recoger datos de la petición
@@ -306,4 +308,30 @@ const updateAvatarHandler = async (req, res) => {
    
 }
 
-module.exports = {registerUserHandler, loginUserHandler, userProfileHandler,updateUserHandler, updateAvatarHandler};
+const getAvatarHandler = async (req, res) => {
+
+    //Sacar el parametro de la url
+    const {file} = req.params;
+
+    //Montar el path real de la imagen
+    const filePath = "./uploads/avatars/" + file;
+
+    //Comprobar que existe el fichero
+    fs.stat(filePath, (error, exists) => {
+
+        if(error || !exists){
+
+            return res.status(404).json({
+
+                status: "error", 
+                mensaje: "Imagen no encontrada"
+            })
+        }
+
+        return res.sendFile(path.resolve(filePath));
+
+    })
+
+}
+
+module.exports = {registerUserHandler, loginUserHandler, userProfileHandler,updateUserHandler, updateAvatarHandler, getAvatarHandler};
