@@ -95,5 +95,15 @@ const updateUserController = async (user, data) => {
 
 };
 
+const updateAvatarController = async(userId, img) => {
 
-module.exports = {userDuplicatedController, saveUserController, findUserController, findUserByIdController, updateUserController};
+    return await User.findOneAndUpdate(
+        {_id : userId},
+        {image: img.filename}, 
+        {new: true}
+    )
+
+}
+
+
+module.exports = {userDuplicatedController, saveUserController, findUserController, findUserByIdController, updateUserController,  updateAvatarController};
