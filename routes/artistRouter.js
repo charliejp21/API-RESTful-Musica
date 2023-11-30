@@ -1,13 +1,10 @@
-//Acción de prueba
+const {Router} = require('express');
+const {auth} = require("../middlewares/auth")
 
-const prueba = (req, res) => {
+const saveArtistHandler = require('../handlers/artistHandler')
+const artistRoutes = Router();
 
-    return res.status(200).json({
 
-        status: "success",
-        mensaje: "Prueba exitosa desde artist"
-    })
+artistRoutes.post("/save", auth, saveArtistHandler)
 
-}
-
-module.exports = prueba;
+module.exports = artistRoutes;
