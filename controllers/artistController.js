@@ -1,3 +1,5 @@
+const mongoosePagination = require("mongoose-pagination")
+
 const Artist = require("../models/ArtistModel");
 
 const saveArtistController = async (artistData) => {
@@ -14,4 +16,17 @@ const getArtistController = async(id) => {
 
 }
 
-module.exports = {saveArtistController, getArtistController};
+const getAllArtistsController = async (page) => {
+
+    const itemsPerPage = 5;
+    
+    const skip = (page - 1) * itemsPerPage;
+
+    return await Artist.find()
+                       .sort("name")
+                       .skip(skip)
+                       .limit(itemsPerPage);
+
+}
+
+module.exports = {saveArtistController, getArtistController, getAllArtistsController};
