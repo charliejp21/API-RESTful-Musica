@@ -1,4 +1,4 @@
-const {saveArtistController, getArtistController} = require("../controllers/artistController")
+const {saveArtistController, getArtistController, getAllArtistsController} = require("../controllers/artistController")
 const saveArtistHandler = async(req, res) => {
 
     //Recoger datos del body
@@ -76,4 +76,50 @@ const getArtistHandler = async(req, res) => {
 
 }
 
-module.exports = {saveArtistHandler, getArtistHandler};
+const getAllArtistsHandler = async(req, res) => {
+
+    //Sacar la posible página
+    let {page} = req.params;
+
+    if(!page){
+
+        page = 1
+
+    }
+
+    try {
+
+        const getAllArtistsDB = await getAllArtistsController(page);
+
+        if(!getAllArtistsDB.length){
+
+            return res.status(404).json({
+
+                status: "error", 
+                mensaje: "No se han encontrado artistas"
+            })
+            
+        }else{
+
+            return res.status(200).json({
+
+                status: "success", 
+                mensaje: "Se han encontrado artistas extosamente",
+                artistas: getAllArtistsDB
+            })
+        }
+        
+    } catch (error) {
+
+        return res.status(500).json({
+
+            status: "error",
+            mensaje: "Error del servidor al obtener los artistas"
+
+        })
+        
+    }
+
+}
+
+module.exports = {saveArtistHandler, getArtistHandler, getAllArtistsHandler};
