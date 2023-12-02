@@ -29,4 +29,10 @@ const getAllArtistsController = async (page) => {
 
 }
 
-module.exports = {saveArtistController, getArtistController, getAllArtistsController};
+const updateArtistController = async (id, data) => {
+
+    return await Artist.findByIdAndUpdate(id, data, {new: true})
+
+}
+
+module.exports = {saveArtistController, getArtistController, getAllArtistsController, updateArtistController};
