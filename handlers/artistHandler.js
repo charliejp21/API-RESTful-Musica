@@ -1,4 +1,4 @@
-const {saveArtistController, getArtistController, getAllArtistsController} = require("../controllers/artistController")
+const {saveArtistController, getArtistController, getAllArtistsController, updateArtistController} = require("../controllers/artistController")
 const saveArtistHandler = async(req, res) => {
 
     //Recoger datos del body
@@ -122,4 +122,49 @@ const getAllArtistsHandler = async(req, res) => {
 
 }
 
-module.exports = {saveArtistHandler, getArtistHandler, getAllArtistsHandler};
+const updateArtistHandler = async(req, res) => {
+
+    // Recoger id del  artista url
+    const {id} = req.params;
+
+    // Recoger datos body
+    const data = req.body;
+
+    //Buscar y actualizar artista
+    try {
+
+        const updateArtistDB = await updateArtistController(id, data);
+
+        if(updateArtistDB){
+
+            return res.status(200).json({
+
+                status: "success",
+                mensaje: "Artista actualizado correctamente",
+                artista: updateArtistDB
+                
+            })
+
+        }
+
+    } catch (error) {
+
+        return res.status(404).json({
+
+            status: "error",
+            mensaje: "No se ha encontrado el artista, prueba con otro id"
+
+        })
+        
+    }
+
+    return res.status(500).json({
+
+        status: "error",
+        mensaje: "Error del servidor al actualizar el artista"
+
+    })
+
+}
+
+module.exports = {saveArtistHandler, getArtistHandler, getAllArtistsHandler, updateArtistHandler};
