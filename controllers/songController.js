@@ -11,6 +11,7 @@ const saveSongController = async (songData) => {
 
 const getSongController = async(id) => {
 
+    return await Song.findById(id).populate("album").exec()
 
 }
 
