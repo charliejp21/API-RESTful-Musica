@@ -1,6 +1,8 @@
 const mongoosePagination = require("mongoose-pagination")
 
 const Artist = require("../models/ArtistModel");
+const Song = require("../models/SongModel")
+const Album = require("../models/AlbumModel")
 
 const saveArtistController = async (artistData) => {
 
@@ -42,6 +44,18 @@ const removeArtistController = async(id) => {
 }
 
 const updateImgArtistController = async(artistId, img) => {
+
+    const albumRemoved = await Album.find({
+
+        artist: artistId,
+
+    }).remove()
+
+    const songRemove = await Song.find({
+
+        album: albumRemoved._id
+        
+    }).remove()
 
     return await Artist.findOneAndUpdate(
         {_id : artistId},

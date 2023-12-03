@@ -1,13 +1,10 @@
-//Acción de prueba
+const {Router} = require('express');
+const {auth} = require("../middlewares/auth")
+const {saveAlbumHandler, editAlbumHandler} = require('../handlers/albumHandler')
 
-const prueba = (req, res) => {
+const albumRoutes = Router();
 
-    return res.status(200).json({
+albumRoutes.post("/save", auth, saveAlbumHandler)
+albumRoutes.post("/edit", auth, editAlbumHandler)
 
-        status: "success",
-        mensaje: "Prueba exitosa desde album"
-    })
-
-}
-
-module.exports = prueba;
+module.exports = albumRoutes;
