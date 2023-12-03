@@ -1,4 +1,4 @@
-const {saveAlbumController, getAlbumsController,getAlbumsArtistController } = require("../controllers/albumController")
+const {saveAlbumController, getAlbumsController,getAlbumsArtistController, updateAlbumController} = require("../controllers/albumController")
 const saveAlbumHandler = async(req, res) => {
 
     if(!req.body){
@@ -129,4 +129,49 @@ const listAlbumsArtistHandler = async(req, res) => {
 
 }
 
-module.exports = {saveAlbumHandler, getAlbumsHandler, listAlbumsArtistHandler};
+const updateAlbumHandler = async(req, res) => {
+
+    const {id} = req.params;
+
+    if(!id){
+
+        return res.status(400).json({
+
+            status: "error", 
+            mensaje: "Falta el id para buscar en la bd"
+        })
+    }
+
+    try {
+
+        const updateAlbumDb = await updateAlbumController(id, req.body)
+
+        if(updateAlbumDb){
+
+            return res.status(200).json({
+
+                status: "success",
+                mensaje: "Album actualizado exitosamente",
+                album: updateAlbumDb
+            })
+        }
+        
+    } catch (error) {
+        
+        return res.status(400).json({
+
+            status: "error",
+            mensaje: "No se ha podido encontrar el album con el id proporcionado"
+        })
+        
+    }
+    
+    return res.status(500).json({
+
+        status: "error", 
+        mensaje: "Error del servidor al actualizar el album"
+    })
+
+}
+
+module.exports = {saveAlbumHandler, getAlbumsHandler, listAlbumsArtistHandler, updateAlbumHandler};
