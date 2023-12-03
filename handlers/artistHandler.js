@@ -1,4 +1,6 @@
-const {saveArtistController, getArtistController, getAllArtistsController, updateArtistController, removeArtistController} = require("../controllers/artistController")
+const fs = require("fs")
+const path = require("path")
+const {saveArtistController, getArtistController, getAllArtistsController, updateArtistController, removeArtistController, updateImgArtistController} = require("../controllers/artistController")
 const saveArtistHandler = async(req, res) => {
 
     //Recoger datos del body
@@ -207,4 +209,94 @@ const removeArtistHandler = async (req, res) => {
 
 }
 
-module.exports = {saveArtistHandler, getArtistHandler, getAllArtistsHandler, updateArtistHandler, removeArtistHandler};
+const updateImgArtistHandler = async (req, res) => {
+
+    const {id} = req.params
+
+    //Configuración de subida(multer)
+
+    //Recoger el ficheri de imagen y comparar si existe
+    if(!req.file){
+
+        return res.status(404).json({
+            status: "error",
+            mensaje: "La petición no incluye la imagen"
+        })
+    }
+
+    //Conseguir el nombre del archivo
+    const originalName = req.file.originalname;
+
+    //Sacar info de la imagen
+    const imgExtension = originalName.split("\.");
+    const extension = imgExtension.length > 1 ? imgExtension.reverse()[0] : null;
+
+    //Comprobar si la extension es valida
+    if(extension != "png" && extension != "jpg" && extension != "jpeg" && extension != "gif"){
+
+        //Borrar archivo y devolver error
+        const filePath = req.file.path;
+        
+        fs.unlinkSync(filePath)
+
+        return res.status(401).json({
+
+            status: "success", 
+            mensaje: "La extensión de la imgen no es válida"
+        })
+
+    }
+
+    //Si es correcto guardar la imagen en la bd
+    try {
+
+        const updateAvatarDB = await updateImgArtistController(id, req.file)
+
+        return res.status(200).json({
+
+            status: "success", 
+            mensaje: "Se ha actualizado la imagen del artista exitosamente",
+            file: req.file.filename,
+            ruta: req.file.path
+        })
+        
+    } catch (error) {
+
+        return res.status(500).json({
+
+            status: "success", 
+            mensaje: "Error del servidor al actualizar el artista"
+
+        })
+        
+    }
+   
+}
+
+const getImgArtistHandler = async (req, res) => {
+
+    //Sacar el parametro de la url
+    const {file} = req.params;
+
+    //Montar el path real de la imagen
+    const filePath = "./uploads/artists/" + file;
+
+    //Comprobar que existe el fichero
+    fs.stat(filePath, (error, exists) => {
+
+        if(error || !exists){
+
+            return res.status(404).json({
+
+                status: "error", 
+                mensaje: "Imagen no encontrada"
+            })
+        }
+
+        return res.sendFile(path.resolve(filePath));
+
+    })
+
+}
+
+module.exports = {saveArtistHandler, getArtistHandler, getAllArtistsHandler, updateArtistHandler, removeArtistHandler, updateImgArtistHandler, getImgArtistHandler};

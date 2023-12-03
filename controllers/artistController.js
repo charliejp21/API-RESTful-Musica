@@ -41,4 +41,15 @@ const removeArtistController = async(id) => {
 
 }
 
-module.exports = {saveArtistController, getArtistController, getAllArtistsController, updateArtistController, removeArtistController};
+const updateImgArtistController = async(artistId, img) => {
+
+    return await Artist.findOneAndUpdate(
+        {_id : artistId},
+        {image: img.filename}, 
+        {new: true}
+    )
+
+}
+
+
+module.exports = {saveArtistController, getArtistController, getAllArtistsController, updateArtistController, removeArtistController, updateImgArtistController};
