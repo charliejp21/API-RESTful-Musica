@@ -10,11 +10,11 @@ const saveAlbumController = async (albumData) => {
     
 }
 
-const editAlbumController = async(id) => {
+const getAlbumsController = async(id) => {
 
-    return await Artist.findById(id);
+    return await Album.findById(id).populate({path: "artist"}).exec()
 
 }
 
 
-module.exports = {saveAlbumController, editAlbumController};
+module.exports = {saveAlbumController, getAlbumsController};

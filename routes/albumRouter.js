@@ -1,10 +1,10 @@
 const {Router} = require('express');
 const {auth} = require("../middlewares/auth")
-const {saveAlbumHandler, editAlbumHandler} = require('../handlers/albumHandler')
+const {saveAlbumHandler, getAlbumsHandler} = require('../handlers/albumHandler')
 
 const albumRoutes = Router();
 
 albumRoutes.post("/save", auth, saveAlbumHandler)
-albumRoutes.post("/edit", auth, editAlbumHandler)
+albumRoutes.get("/id/:id", auth, getAlbumsHandler)
 
 module.exports = albumRoutes;
