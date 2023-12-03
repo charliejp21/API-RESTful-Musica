@@ -1,4 +1,7 @@
-const {saveAlbumController, getAlbumsController,getAlbumsArtistController, updateAlbumController} = require("../controllers/albumController")
+const fs = require("fs")
+const path = require("path")
+
+const {saveAlbumController, getAlbumsController,getAlbumsArtistController, updateAlbumController, updateImgAlbumController} = require("../controllers/albumController")
 const saveAlbumHandler = async(req, res) => {
 
     if(!req.body){
@@ -174,4 +177,94 @@ const updateAlbumHandler = async(req, res) => {
 
 }
 
-module.exports = {saveAlbumHandler, getAlbumsHandler, listAlbumsArtistHandler, updateAlbumHandler};
+const updateImgAlbumHandler = async (req, res) => {
+
+    const {id} = req.params
+
+    //Configuración de subida(multer)
+
+    //Recoger el ficheri de imagen y comparar si existe
+    if(!req.file){
+
+        return res.status(404).json({
+            status: "error",
+            mensaje: "La petición no incluye la imagen"
+        })
+    }
+
+    //Conseguir el nombre del archivo
+    const originalName = req.file.originalname;
+
+    //Sacar info de la imagen
+    const imgExtension = originalName.split("\.");
+    const extension = imgExtension.length > 1 ? imgExtension.reverse()[0] : null;
+
+    //Comprobar si la extension es valida
+    if(extension != "png" && extension != "jpg" && extension != "jpeg" && extension != "gif"){
+
+        //Borrar archivo y devolver error
+        const filePath = req.file.path;
+        
+        fs.unlinkSync(filePath)
+
+        return res.status(401).json({
+
+            status: "success", 
+            mensaje: "La extensión de la imgen no es válida"
+        })
+
+    }
+
+    //Si es correcto guardar la imagen en la bd
+    try {
+
+        const updateImgAlbumDB = await updateImgAlbumController(id, req.file)
+
+        return res.status(200).json({
+
+            status: "success", 
+            mensaje: "Se ha actualizado la imagen del album exitosamente",
+            file: req.file.filename,
+            ruta: req.file.path
+        })
+        
+    } catch (error) {
+
+        return res.status(500).json({
+
+            status: "success", 
+            mensaje: "Error del servidor al actualizar el album"
+
+        })
+        
+    }
+   
+}
+
+const getImgAlbumHandler = async (req, res) => {
+
+    //Sacar el parametro de la url
+    const {file} = req.params;
+
+    //Montar el path real de la imagen
+    const filePath = "./uploads/albums/" + file;
+
+    //Comprobar que existe el fichero
+    fs.stat(filePath, (error, exists) => {
+
+        if(error || !exists){
+
+            return res.status(404).json({
+
+                status: "error", 
+                mensaje: "Imagen del album no encontrada"
+            })
+        }
+
+        return res.sendFile(path.resolve(filePath));
+
+    })
+
+}
+
+module.exports = {saveAlbumHandler, getAlbumsHandler, listAlbumsArtistHandler, updateAlbumHandler, updateImgAlbumHandler, getImgAlbumHandler};
