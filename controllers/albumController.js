@@ -26,4 +26,10 @@ const getAlbumsArtistController = async(id) => {
 
 }
 
-module.exports = {saveAlbumController, getAlbumsController, getAlbumsArtistController};
+const updateAlbumController = async(id, data) => {
+
+    return Album.findByIdAndUpdate(id, data, {new:true})
+    
+}
+
+module.exports = {saveAlbumController, getAlbumsController, getAlbumsArtistController, updateAlbumController};
