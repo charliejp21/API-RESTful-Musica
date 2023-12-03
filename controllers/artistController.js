@@ -39,12 +39,6 @@ const updateArtistController = async (id, data) => {
 
 const removeArtistController = async(id) => {
 
-   return await Artist.findByIdAndDelete(id)
-
-}
-
-const updateImgArtistController = async(artistId, img) => {
-
     const albumRemoved = await Album.find({
 
         artist: artistId,
@@ -56,6 +50,12 @@ const updateImgArtistController = async(artistId, img) => {
         album: albumRemoved._id
         
     }).remove()
+
+   return await Artist.findByIdAndDelete(id)
+
+}
+
+const updateImgArtistController = async(artistId, img) => {
 
     return await Artist.findOneAndUpdate(
         {_id : artistId},

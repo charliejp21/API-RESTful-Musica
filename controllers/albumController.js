@@ -31,5 +31,14 @@ const updateAlbumController = async(id, data) => {
     return Album.findByIdAndUpdate(id, data, {new:true})
     
 }
+const updateImgAlbumController = async(albumId, img) => {
 
-module.exports = {saveAlbumController, getAlbumsController, getAlbumsArtistController, updateAlbumController};
+    return await Album.findOneAndUpdate(
+        {_id : albumId},
+        {img: img.filename}, 
+        {new: true}
+    )
+
+}
+
+module.exports = {saveAlbumController, getAlbumsController, getAlbumsArtistController, updateAlbumController, updateImgAlbumController};
