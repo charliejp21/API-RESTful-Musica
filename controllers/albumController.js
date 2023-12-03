@@ -16,5 +16,14 @@ const getAlbumsController = async(id) => {
 
 }
 
+const getAlbumsArtistController = async(id) => {
 
-module.exports = {saveAlbumController, getAlbumsController};
+    return await Album.find({
+
+        artist: id
+
+    }).populate("artist").exec()
+
+}
+
+module.exports = {saveAlbumController, getAlbumsController, getAlbumsArtistController};
