@@ -15,4 +15,18 @@ const getSongController = async(id) => {
 
 }
 
-module.exports = {saveSongController, getSongController};
+const getSongsController = async(id) => {
+
+   return await Song.find({album: id})
+                    .populate({path: "album",
+                               populate: {
+                                path: "artist",
+                                model: "Artist"
+                               }             
+                             })
+                    .sort("track")
+                    .exec()
+
+}
+
+module.exports = {saveSongController, getSongController, getSongsController};

@@ -1,4 +1,4 @@
-const {saveSongController, getSongController} = require("../controllers/songController")
+const {saveSongController, getSongController, getSongsController} = require("../controllers/songController")
 const saveSongHandler = async(req, res) => {
 
     if(!req.body){
@@ -85,5 +85,50 @@ const getSongHandler = async(req, res) => {
 
 }
 
+const getSongsHandler = async(req, res) => {
 
-module.exports = {saveSongHandler, getSongHandler};
+    const {albumId} = req.params;
+
+    if(!albumId){
+
+        return res.status(401).json({
+
+            status: "error",
+            mensaje: "No se ha proporcionado el id del album"
+        })
+    }
+
+    try {
+        
+        const getSongsDB = await getSongsController(albumId);
+        
+        if(getSongsDB){
+
+            return res.status(200).json({
+
+                status: "success", 
+                mensaje: "Canciones encontradas exitosamente",
+                canciones: getSongsDB
+
+            })
+
+        }
+    } catch (error) {
+        
+        return res.status(404).json({
+
+            status: "error",
+            mensaje: "No se han encontrado canciones para el album con el id proporcionado"
+        })
+        
+    }
+
+    return res.status(500).json({
+
+        status: "error", 
+        mensaje: "Error del servidor al buscar la canciones"
+    })
+
+} 
+
+module.exports = {saveSongHandler, getSongHandler, getSongsHandler};
