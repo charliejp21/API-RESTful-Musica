@@ -1,4 +1,4 @@
-const {saveArtistController, getArtistController, getAllArtistsController, updateArtistController} = require("../controllers/artistController")
+const {saveArtistController, getArtistController, getAllArtistsController, updateArtistController, removeArtistController} = require("../controllers/artistController")
 const saveArtistHandler = async(req, res) => {
 
     //Recoger datos del body
@@ -167,4 +167,44 @@ const updateArtistHandler = async(req, res) => {
 
 }
 
-module.exports = {saveArtistHandler, getArtistHandler, getAllArtistsHandler, updateArtistHandler};
+const removeArtistHandler = async (req, res) => {
+
+    //Sacar el id del artista de la url
+    const {id} = req.params;
+
+    //Hacer consulta para buscar y eliminar el artista con un await
+
+    try {
+
+        const removeArtistDb = await removeArtistController(id);
+
+        if(removeArtistDb){
+
+            return res.status(200).json({
+
+                status: "success", 
+                mensaje: "Artista eliminado exitosamente"
+            })
+
+        }
+        
+    } catch (error) {
+        
+        return res.status(400).json({
+
+            status: "error", 
+            mensaje: "No se ha encontrado el artista con el id proporcionado"
+        })
+        
+    }
+
+    //Devolver el resultado
+    return res.status(500).json({
+
+        status: "error", 
+        mensaje: "Error del servidor al borrar el artista"
+    })
+
+}
+
+module.exports = {saveArtistHandler, getArtistHandler, getAllArtistsHandler, updateArtistHandler, removeArtistHandler};

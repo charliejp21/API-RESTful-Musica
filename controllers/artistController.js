@@ -35,4 +35,10 @@ const updateArtistController = async (id, data) => {
 
 }
 
-module.exports = {saveArtistController, getArtistController, getAllArtistsController, updateArtistController};
+const removeArtistController = async(id) => {
+
+   return await Artist.findByIdAndDelete(id)
+
+}
+
+module.exports = {saveArtistController, getArtistController, getAllArtistsController, updateArtistController, removeArtistController};
