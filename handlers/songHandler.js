@@ -1,4 +1,4 @@
-const {saveSongController, getSongController, getSongsController} = require("../controllers/songController")
+const {saveSongController, getSongController, getSongsController, updateSongController} = require("../controllers/songController")
 const saveSongHandler = async(req, res) => {
 
     if(!req.body){
@@ -131,4 +131,56 @@ const getSongsHandler = async(req, res) => {
 
 } 
 
-module.exports = {saveSongHandler, getSongHandler, getSongsHandler};
+const updateSongHandler = async(req, res) => {
+
+    //Recoger el id de canción 
+    const {songId} = req.params;
+
+    if(!songId){
+
+        return res.status(401).json({
+
+            status: "error", 
+            mensaje: "Falta el id por enviar"
+        })
+
+    }
+
+    //Recoger los datos para guardar
+
+    //Búsqueda y actualización
+    try {
+
+        const updateSongDb = await updateSongController(songId, req.body)
+
+        if(updateSongDb){
+
+            return res.status(200).json({
+
+                status: "success", 
+                mensaje: "Canción actualizada exitosamente", 
+                song: updateSongDb
+            })
+
+        }
+        
+    } catch (error) {
+
+        return res.status(404).json({
+
+            status: "error", 
+            mensaje: "Se ha sido posible actualizar la canción con el id proporcionado"
+        })
+        
+    }
+
+    return res.status(500).json({
+
+        status: "error", 
+        mensaje: "Error del servidor al actualizar la canción"
+    })
+
+
+}
+
+module.exports = {saveSongHandler, getSongHandler, getSongsHandler, updateSongHandler};
