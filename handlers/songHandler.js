@@ -1,4 +1,4 @@
-const {saveSongController, getSongController, getSongsController, updateSongController} = require("../controllers/songController")
+const {saveSongController, getSongController, getSongsController, updateSongController, deleteSongController} = require("../controllers/songController")
 const saveSongHandler = async(req, res) => {
 
     if(!req.body){
@@ -183,4 +183,51 @@ const updateSongHandler = async(req, res) => {
 
 }
 
-module.exports = {saveSongHandler, getSongHandler, getSongsHandler, updateSongHandler};
+const deleteSongHandler = async(req, res) => {
+
+    const {songId} = req.params; 
+
+    if(!songId){
+
+        return res.status(401).json({
+
+            status: "error", 
+            mensaje: "Falta el id por enviar"
+        })
+
+    }
+
+    try {
+
+        const deleteSongDb = await deleteSongController(songId)
+
+        if(deleteSongDb){
+
+            return res.status(200).json({
+
+                status: "success", 
+                mensaje: "Canción borrada exitosamente", 
+                song: deleteSongDb
+            })
+
+        }
+        
+    } catch (error) {
+
+        return res.status(404).json({
+
+            status: "error", 
+            mensaje: "No ha sido posible borrar la canción con el id proporcionado"
+        })
+        
+    }
+
+    return res.status(500).json({
+
+        status: "error", 
+        mensaje: "Error del servidor al borrar la canción"
+    })
+
+}
+
+module.exports = {saveSongHandler, getSongHandler, getSongsHandler, updateSongHandler, deleteSongHandler};

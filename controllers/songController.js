@@ -33,6 +33,13 @@ const updateSongController = async(id, data) => {
 
     return await Song.findByIdAndUpdate(id, data, {new:true})
 
+
 }
 
-module.exports = {saveSongController, getSongController, getSongsController, updateSongController};
+const deleteSongController = async(id) => {
+
+   return await Song.findByIdAndRemove(id);
+
+}
+    
+module.exports = {saveSongController, getSongController, getSongsController, updateSongController, deleteSongController};
