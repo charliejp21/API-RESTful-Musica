@@ -41,5 +41,16 @@ const deleteSongController = async(id) => {
    return await Song.findByIdAndRemove(id);
 
 }
+
+const uploadSongController = async(songId, song) => {
+
+    return await Song.findOneAndUpdate(
+        {_id : songId},
+        {file: song.filename}, 
+        {new: true}
+    )
+
+}
+
     
-module.exports = {saveSongController, getSongController, getSongsController, updateSongController, deleteSongController};
+module.exports = {saveSongController, getSongController, getSongsController, updateSongController, deleteSongController, uploadSongController};
