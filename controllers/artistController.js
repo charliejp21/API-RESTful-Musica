@@ -39,19 +39,23 @@ const updateArtistController = async (id, data) => {
 
 const removeArtistController = async(id) => {
 
+    const artistDelete = await Artist.findByIdAndDelete(id)
+
     const albumRemoved = await Album.find({
 
-        artist: artistId,
+        artist: id,
 
-    }).remove()
+    })
 
-    const songRemove = await Song.find({
+    // Usar Promise.all para esperar la finalización de todas las operaciones asincrónicas
+    await Promise.all(albumRemoved.map(async (album) => {
+        // Usar deleteMany para eliminar las canciones asociadas al álbum
+        await Song.deleteMany({ album: album._id });
+        // Usar deleteOne para eliminar el álbum
+        await Album.deleteOne({ _id: album._id });
+    }));
 
-        album: albumRemoved._id
-        
-    }).remove()
-
-   return await Artist.findByIdAndDelete(id)
+    return artistDelete;
 
 }
 
