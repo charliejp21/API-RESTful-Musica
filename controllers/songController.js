@@ -29,4 +29,10 @@ const getSongsController = async(id) => {
 
 }
 
-module.exports = {saveSongController, getSongController, getSongsController};
+const updateSongController = async(id, data) => {
+
+    return await Song.findByIdAndUpdate(id, data, {new:true})
+
+}
+
+module.exports = {saveSongController, getSongController, getSongsController, updateSongController};
