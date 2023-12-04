@@ -1,6 +1,7 @@
 const mongoosePagination = require("mongoose-pagination")
 
 const Album = require("../models/AlbumModel")
+const Song = require("../models/SongModel")
 
 const saveAlbumController = async (albumData) => {
 
@@ -41,4 +42,16 @@ const updateImgAlbumController = async(albumId, img) => {
 
 }
 
-module.exports = {saveAlbumController, getAlbumsController, getAlbumsArtistController, updateAlbumController, updateImgAlbumController};
+const deleteAlbumController = async (id) => {
+
+    // Utilizar deleteOne para eliminar el álbum
+    const deleteAlbum = await Album.deleteOne({ _id: id });
+
+    // Utilizar deleteMany para eliminar todas las canciones asociadas al álbum
+    await Song.deleteMany({ album: id });
+
+    return deleteAlbum;
+
+}
+
+module.exports = {saveAlbumController, getAlbumsController, getAlbumsArtistController, updateAlbumController, updateImgAlbumController, deleteAlbumController};
