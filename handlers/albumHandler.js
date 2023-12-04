@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 
-const {saveAlbumController, getAlbumsController,getAlbumsArtistController, updateAlbumController, updateImgAlbumController} = require("../controllers/albumController")
+const {saveAlbumController, getAlbumsController,getAlbumsArtistController, updateAlbumController, updateImgAlbumController, deleteAlbumController} = require("../controllers/albumController")
 const saveAlbumHandler = async(req, res) => {
 
     if(!req.body){
@@ -267,4 +267,49 @@ const getImgAlbumHandler = async (req, res) => {
 
 }
 
-module.exports = {saveAlbumHandler, getAlbumsHandler, listAlbumsArtistHandler, updateAlbumHandler, updateImgAlbumHandler, getImgAlbumHandler};
+const removeAlbumHandler = async(req, res) => {
+
+    const {id} = req.params;
+
+    if(!id){
+
+        return res.status(401).json({
+
+            status: "error", 
+            mensaje: "Falta el id del album"
+        })
+    }
+
+    try {
+
+        const deleteAlbumDb = await deleteAlbumController(id);
+
+        if(deleteAlbumDb){
+
+            return res.status(200).json({
+
+                status: "success", 
+                mensaje: "Album borrado exitosamente"
+            })
+        }
+        
+    } catch (error) {
+
+        return res.status(404).json({
+
+            status: "error", 
+            mensaje: "No ha sido posible borrar el album con el id proporcionado"
+        })
+        
+    }
+
+    return res.status(500).json({
+
+        status: "error", 
+        mensaje: "Error del servidor al borrar el album"
+    })
+
+
+}
+
+module.exports = {saveAlbumHandler, getAlbumsHandler, listAlbumsArtistHandler, updateAlbumHandler, updateImgAlbumHandler, getImgAlbumHandler, removeAlbumHandler};

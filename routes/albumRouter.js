@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const {auth} = require("../middlewares/auth")
 const multer = require("multer")
-const {saveAlbumHandler, getAlbumsHandler, listAlbumsArtistHandler, updateAlbumHandler, updateImgAlbumHandler, getImgAlbumHandler} = require('../handlers/albumHandler')
+const {saveAlbumHandler, getAlbumsHandler, listAlbumsArtistHandler, updateAlbumHandler, updateImgAlbumHandler, getImgAlbumHandler, removeAlbumHandler} = require('../handlers/albumHandler')
 
 const albumRoutes = Router();
 
@@ -25,5 +25,6 @@ albumRoutes.get("/list/:artistId", auth, listAlbumsArtistHandler)
 albumRoutes.put("/update/:id", auth, updateAlbumHandler)
 albumRoutes.post("/upload-img/:id", [auth, uploads.single("file0")], updateImgAlbumHandler)
 albumRoutes.get("/img/:file", getImgAlbumHandler)
+albumRoutes.delete("/delete/:id", auth, removeAlbumHandler)
 
 module.exports = albumRoutes;
