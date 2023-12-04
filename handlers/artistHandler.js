@@ -185,7 +185,8 @@ const removeArtistHandler = async (req, res) => {
             return res.status(200).json({
 
                 status: "success", 
-                mensaje: "Artista eliminado exitosamente"
+                mensaje: "Artista eliminado exitosamente",
+                artista: removeArtistDb
             })
 
         }
