@@ -1,4 +1,7 @@
-const {saveSongController, getSongController, getSongsController, updateSongController, deleteSongController} = require("../controllers/songController")
+const fs = require("fs")
+const path = require("path")
+
+const {saveSongController, getSongController, getSongsController, updateSongController, deleteSongController, uploadSongController} = require("../controllers/songController")
 const saveSongHandler = async(req, res) => {
 
     if(!req.body){
@@ -229,5 +232,105 @@ const deleteSongHandler = async(req, res) => {
     })
 
 }
+const uploadSongHandler = async (req, res) => {
 
-module.exports = {saveSongHandler, getSongHandler, getSongsHandler, updateSongHandler, deleteSongHandler};
+    const {id} = req.params;
+
+    //Configuración de subida(multer)
+
+    //Recoger el ficheri de imagen y comparar si existe
+    if(!req.file){
+
+        return res.status(404).json({
+            status: "error",
+            mensaje: "La petición no incluye la canción"
+        })
+    }
+
+    //Conseguir el nombre del archivo
+    const originalName = req.file.originalname;
+
+    //Sacar info de la imagen
+    const songExtension = originalName.split("\.");
+    const extension = songExtension.length > 1 ? songExtension.reverse()[0] : null;
+
+    //Comprobar si la extension es valida
+    if(extension != "mp3" && extension != "ogg"){
+
+        //Borrar archivo y devolver error
+        const filePath = req.file.path;
+        
+        fs.unlinkSync(filePath)
+
+        return res.status(401).json({
+
+            status: "success", 
+            mensaje: "La extensión de la canción no es válida"
+        })
+
+    }
+
+    //Si es correcto guardar la imagen en la bd
+    try {
+
+        await uploadSongController(id, req.file)
+
+        if(updateSongController){
+
+            return res.status(200).json({
+
+                status: "success", 
+                mensaje: "La canción se ha guardado exitosamente",
+                file: req.file.filename,
+                ruta: req.file.path
+            })
+
+        }
+        
+    } catch (error) {
+
+        return res.status(404).json({
+
+            status: "error", 
+            mensaje: "No se ha encontrado una canción con el id proporcionado"
+
+        })
+        
+    }
+
+    return res.status(500).json({
+
+        status: "error", 
+        mensaje: "Error del servidor al guardar la canción"
+
+    })
+   
+}
+
+const getSongFileHandler = async (req, res) => {
+
+    //Sacar el parametro de la url
+    const {idFile} = req.params;
+
+    //Montar el path real de la imagen
+    const filePath = "./uploads/songs/" + idFile;
+
+    //Comprobar que existe el fichero
+    fs.stat(filePath, (error, exists) => {
+
+        if(error || !exists){
+
+            return res.status(404).json({
+
+                status: "error", 
+                mensaje: "Canción no encontrada, prueba con otro id"
+            })
+        }
+
+        return res.sendFile(path.resolve(filePath));
+
+    })
+
+}
+
+module.exports = {saveSongHandler, getSongHandler, getSongsHandler, updateSongHandler, deleteSongHandler, uploadSongHandler, getSongFileHandler};
